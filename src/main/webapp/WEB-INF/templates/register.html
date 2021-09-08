@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Spitter</title>
+    <link rel="stylesheet" th:href="@{/resources/style.css}">
+</head>
+<body>
+<div id="header" th:include="page :: header"></div>
+<h1>Register</h1>
+<form method="post" th:object="${spitter}" enctype="multipart/form-data" th:action="@{/spitter/register}">
+    <div class="errors" th:if="${#fields.hasErrors('*')}">
+        <ul>
+            <li th:each="err : ${#fields.errors('*')}"
+                th:text="${err}">Input is incorrect
+            </li>
+        </ul>
+    </div>
+    <table style="margin-right: auto;margin-left: auto">
+        <tr>
+            <td><label th:class="${#fields.hasErrors('firstName')}?'error'" th:for="${#ids.next('firstName')}">First
+                Name</label>:
+            </td>
+            <td><input type="text" th:field="*{firstName}" th:errorclass="error"/></td>
+        </tr>
+        <tr>
+            <td><label th:class="${#fields.hasErrors('lastName')}?'error'" th:for="${#ids.next('lastName')}">Last
+                Name</label>:
+            </td>
+            <td><input type="text" th:field="*{lastName}" th:errorclass="error"/></td>
+        </tr>
+        <tr>
+            <td><label th:class="${#fields.hasErrors('email')}?'error'" th:for="${#ids.next('email')}">Email</label>:
+            </td>
+            <td><input type="text" th:field="*{email}" th:errorclass="error"/></td>
+        </tr>
+        <tr>
+            <td><label th:class="${#fields.hasErrors('username')}?'error'" th:for="${#ids.next('username')}">User
+                Name</label>:
+            </td>
+            <td><input type="text" th:field="*{username}" th:errorclass="error"/></td>
+        </tr>
+        <tr>
+            <td><label th:class="${#fields.hasErrors('password')}?'error'"
+                       th:for="${#ids.next('password')}">Password</label>:
+            </td>
+            <td><input type="password" th:field="*{password}" th:errorclass="error"/></td>
+        </tr>
+        <tr>
+            <td><label>Profile Picture</label>:</td>
+            <td><input type="file"  name="profilePicture" accept="image/gif,image/png,image/jpeg"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Register"/></td>
+        </tr>
+    </table>
+</form>
+<div id="footer" th:include="page :: copy"></div>
+</body>
+</html>

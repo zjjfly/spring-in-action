@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/jdbc
+       http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+    <!--从第五章开始舒注释掉-->
+    <context:component-scan base-package="com.springinaction.ch2,com.springinaction.ch3,com.springinaction.ch4"/>
+    <beans profile="qa">
+        <jdbc:embedded-database id="dataSource">
+            <jdbc:script location="classpath:schema.sql"/>
+            <jdbc:script location="classpath:test-data.sql"/>
+        </jdbc:embedded-database>
+    </beans>
+    <beans profile="dev">
+        <bean id="dataSource"
+              class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"
+              p:driverClassName="com.mysql.jdbc.Driver"
+              p:url="jdbc:mysql://localhost:3306/test?autoReconnect=true"
+              p:username="root"
+              p:password="123456"/>
+    </beans>
+    <beans>
+        <context:property-placeholder location="classpath*:*.properties"/>
+        <bean id="cookie" class="com.springinaction.ch3.Cookie" primary="true"/>
+        <bean id="blankdisc" class="com.springinaction.ch2.BlankDisc">
+            <constructor-arg name="artist" value="${disc.artist}"/>
+            <constructor-arg name="title" value="${disc.title}"/>
+        </bean>
+        <bean id="blank" class="com.springinaction.ch2.BlankDisc">
+            <constructor-arg name="artist" value="#{blankdisc.getArtist()}"/>
+            <!--<constructor-arg name="title" value="#{T(System).currentTimeMillis()}"/>-->
+            <constructor-arg name="title" value="#{systemProperties['os.name']}"/>
+        </bean>
+        <aop:aspectj-autoproxy/>
+        <bean id="rudeAudience" class="com.springinaction.ch4.RudeAudience"/>
+        <aop:config>
+            <aop:aspect ref="rudeAudience">
+                <aop:pointcut id="perform" expression="execution(* com.springinaction.ch4.Performance.perform(..))"/>
+                <aop:before method="stand" pointcut-ref="perform"/>
+                <aop:after-returning method="shout" pointcut-ref="perform"/>
+                <aop:after-throwing method="demandRefund" pointcut-ref="perform"/>
+                <aop:around method="watchPerformance" pointcut-ref="perform"/>
+            </aop:aspect>
+        </aop:config>
+        <bean id="newCounter" class="com.springinaction.ch4.NewTrackCounter"/>
+        <aop:config>
+            <aop:aspect ref="newCounter">
+                <aop:pointcut id="play"
+                              expression="execution(* com.springinaction.ch2.CompactDisc.playTrack(int)) and args(trackNumber)"/>
+                <aop:before method="countTrack" pointcut-ref="play"/>
+            </aop:aspect>
+            <aop:aspect>
+                <aop:declare-parents types-matching="com.springinaction.ch4.Performance+"
+                                     implement-interface="com.springinaction.ch4.Encoreable" delegate-ref="encoreableImpl"/>
+            </aop:aspect>
+        </aop:config>
+    </beans>
+</beans>

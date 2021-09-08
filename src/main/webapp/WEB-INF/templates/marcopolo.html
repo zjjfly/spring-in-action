@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>WebSocketTest</title>
+    <link rel="stylesheet" th:href="@{/resources/style.css}">
+    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+    <script th:src="@{/resources/js/stomp.js}"></script>
+    <script>
+        var url = '/spittr/marcopolo';
+        var sock = new SockJS(url);
+        var stomp = Stomp.over(sock);
+        var json = JSON.stringify({'message': 'Marco!'});
+        stomp.connect('guest', 'guest', function (frame) {
+            console.log("Connected!");
+            stomp.subscribe('/topic/shout', function (incoming) {
+                var shout = JSON.parse(incoming.body);
+                console.log("Recieve a meeage:" + shout.message);
+            });
+            stomp.subscribe('/app/shout', function (incoming) {
+                var shout = JSON.parse(incoming.body);
+                console.log("Recieve a meeage:" + shout.message);
+            });
+            stomp.send('/app/marcopolo', {}, json);
+        })
+    </script>
+</head>
+<body>
+<div id="header" th:include="page :: header"></div>
+<button onclick="sock.close()">Close</button>
+<div id="footer" th:include="page :: copy"></div>
+</body>
+</html>

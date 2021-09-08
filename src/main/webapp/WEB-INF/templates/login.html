@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Spittr</title>
+    <link rel="stylesheet" th:href="@{/resources/style.css}">
+</head>
+<body>
+<div id="header" th:include="page :: header"></div>
+<h3>Login with Username and Password</h3>
+<form name='f' th:action='@{/login}' method='POST' >
+    <table style="margin-left: auto;margin-right: auto">
+        <tr>
+            <td>User:</td>
+            <td><input type='text' name='username' value=''></td>
+        </tr>
+        <tr>
+            <td>Password:</td>
+            <td><input type='password' name='password'/></td>
+        </tr>
+        <tr>
+            <td><input type="checkbox" id="" name="remeber-me"><label th:for="remeber-me" class="inline">Remeber me</label></td>
+            <td><input name="submit" type="submit" value="Login"/></td>
+        </tr>
+    </table>
+</form>
+<div id="footer" th:include="page :: copy"></div>
+</body>
+</html>

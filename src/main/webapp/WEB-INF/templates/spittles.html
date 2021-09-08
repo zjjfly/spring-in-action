@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Spitter</title>
+    <link rel="stylesheet" th:href="@{/resources/style.css}">
+    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+    <script th:src="@{/resources/js/stomp.js}"></script>
+</head>
+<body>
+<div id="header" th:include="page :: header"></div>
+<h1>Spit it out...</h1>
+<form method="post" th:object="${spittle}" th:action="@{/spittles}">
+    <input th:field="*{latitude}" type="hidden" >
+    <input th:field="*{longitude}" type="hidden">
+    <textarea th:field="*{message}" cols="80" rows="5"></textarea><br/>
+    <!--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>-->
+    <input type="submit" value="Add" />
+</form>
+<div class="listTitle">
+    <h1>Recent Spittles</h1>
+    <ul class="spittleList">
+        <li th:each="spittle,iterStat : ${spittleList}" th:id="${'spittle_'+iterStat.index}">
+            <div class="spittleMessage">
+                [[${spittle.message}]]
+            </div>
+            <div>
+            <span class="spittleTime">
+                [[${spittle.time}]]
+            </span>
+                <span class="spittleLocation">
+                    ([[${spittle.latitude}]],[[${spittle.longitude}]])
+            </span>
+            </div>
+        </li>
+    </ul>
+</div>
+<div id="footer" th:include="page :: copy"></div>
+<script>
+    var url = '/spittr/marcopolo';
+    var sock = new SockJS(url);
+    var stomp = Stomp.over(sock);
+    stomp.connect('guest', 'guest', function (frame) {
+        console.log("Connected!");
+        stomp.subscribe('/topic/spittlefeed', function (incoming) {
+            var spittle = JSON.parse(incoming.body);
+            console.log("Recieve a Spittle:" + spittle.message);
+        });
+        stomp.subscribe('/user/queue/notify', function (incoming) {
+            var spittle = JSON.parse(incoming.body);
+            console.log("Recieve a Spittle:" + spittle.message);
+        });
+    })
+</script>
+</body>
+</html>

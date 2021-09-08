@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:fragment="header">
+    <a th:href="@{/home}" >
+        <img th:src="@{/resources/images/spitter_logo_50.png}" border="0"/></a>
+    <div id="authorized" sec:authorize="not isAuthenticated()" style="top: 10px;right:10px;z-index: auto;position: absolute">
+        <a th:href="@{/login}" style="border: solid 1px;background-color: white;border-radius: 7%;text-decoration: none">登录</a>
+    </div>
+    <div id="authorized" sec:authorize="isAuthenticated()" style="top: 10px;right:10px;z-index: auto;position: absolute">
+        Hello,<span sec:authentication="name">someone</span>
+        <span sec:authorize-url="/spitter/+${#authentication.getName()}">
+            <a th:href="@{/spitter/} + ${#authentication.getName()}" style="border: solid 1px;background-color: white;border-radius: 7%;text-decoration: none">个人信息</a>
+        </span>
+        <form th:action="@{/logout}" style="display: inline" th:method="POST">
+            <input name="logout" type="submit" value="Log out"/>
+        </form>
+    </div>
+</div>
+<div>Content goes here</div>
+
+<div th:fragment="copy">Copyright &copy; JunJie Zi</div>
+</body>
+</html>

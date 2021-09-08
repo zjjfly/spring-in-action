@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>WebSocketTest</title>
+    <link rel="stylesheet" th:href="@{/resources/style.css}">
+    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+    <script>
+        //使用WebSocket
+        //var url='ws://'+window.location.host+'/spittr/marco/test';
+        //var sock=new WebSocket(url);
+        //使用SocketJS
+        var url = "marco/test";
+        var sock = new SockJS(url);
+        sock.onopen = function () {
+            console.log('Opening!');
+            sayMarco();
+        }
+        sock.onclose = function () {
+            // body
+            console.log('Closing!');
+        }
+        sock.onmessage = function (msg) {
+            console.log('Recieve a message:' + msg.data);
+            setTimeout(sayMarco, 2000);
+        }
+
+        function sayMarco() {
+            console.log('Say Marco!');
+            sock.send("Marco!");
+        }
+    </script>
+</head>
+<body>
+<div id="header" th:include="page :: header"></div>
+<button onclick="sock.close()">Close</button>
+<div id="footer" th:include="page :: copy"></div>
+</body>
+</html>

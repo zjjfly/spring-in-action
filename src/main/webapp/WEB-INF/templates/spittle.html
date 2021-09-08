@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Spitter</title>
+    <link rel="stylesheet" th:href="@{/resources/style.css}">
+</head>
+<body>
+<div id="header" th:include="page :: header"></div>
+<div class="spittleVieWw">
+    <div class="spittleMessage">[[${spittle.message}]]</div>
+    <div>
+        <span class="spittleTime">[[${spittle.time}]]</span>
+    </div>
+</div>
+<div id="footer" th:include="page :: copy"></div>
+</body>
+</html>
